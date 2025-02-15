@@ -1,6 +1,27 @@
 // const Joi = require("joi");
 import Joi from "joi";
 const date = new Date();
+import { z } from 'zod';
+
+///// ZOD VALIDATION ///
+
+// Schema for one-to-one transfer
+export const oneToOneTransferSchema = z.object({
+  senderId: z.string().nonempty(),
+  recipientId: z.string().nonempty(),
+  amount: z.number().positive(),
+});
+
+// Schema for one-to-many distribution
+export const distributionSchema = z.object({
+  recipientId: z.string().nonempty(),
+  amount: z.number().positive(),
+});
+
+export const oneToManyTransferSchema = z.object({
+  senderId: z.string().nonempty(),
+  distributions: z.array(distributionSchema).nonempty(),
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //SCHEMA

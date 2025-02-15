@@ -7,6 +7,7 @@ import express, { json } from "express";
 // import requireAuthenticatedUser from "./middlewares/auth.middleware.js";
 import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
 import connectDB from "./config/database.js";
+import transferRouter from './routes/interWalletTransaction/interWalletTransaction.js';
 
 const app = express();
 
@@ -23,6 +24,8 @@ app.use(express.json());
 // ///////////////// Mobile money /////////////////
 app.use("/api/mobile-money", mobileMoneyRouter);
 
+//////// Transfer Cash ///////
+app.use("/api/wallet/transfer", transferRouter)
 
 app.listen(PORT, () => {
   console.log(`server started on ${PORT}`)
