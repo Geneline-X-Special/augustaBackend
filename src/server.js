@@ -5,7 +5,7 @@ import express, { json } from "express";
 // import cardRoute from "../src/routes/cardRoutes/cardsRoute.js";
 // import walletRoute from "../src/routes/walletRoute/walletRoute.js";
 // import requireAuthenticatedUser from "./middlewares/auth.middleware.js";
-// import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
+import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
 import connectDB from "./config/database.js";
 
 const app = express();
@@ -20,7 +20,7 @@ connectDB(app);
 // app.use("/wallet", requireAuthenticatedUser, walletRoute);
 
 // ///////////////// Mobile money /////////////////
-// app.use("/api/mobile-money", mobileMoneyRouter);
+app.use("/api/mobile-money", mobileMoneyRouter);
 
 
 app.listen(PORT, () => {

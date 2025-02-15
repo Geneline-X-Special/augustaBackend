@@ -1,13 +1,6 @@
-DB_HOST=
-DB_NAME=
-APP_PORT=
-DB_USERNAME=
-DB_PASSWORD=
-DB_PORT=
-APP_URL=
-JWT_SECRET=
-
 OLTRA_PAY_REDIRECT_URL = http://localhost:3800
 PORT = 3800
-
+MONIME_ACCESS_TOKEN = mon_kpWwtYd58etz7zRio2cgXlFiT8oPCZU01koSAm4vZ3k8xyuQgfKMezdN454fqkMA
+MONIME_CHECKOUT_URL = https://api.monime.space/v1/checkout-sessions
+MONIME_SPACE_ID = spc-QcPL6aSJ38EDif4LRf9X23FV2
 MONGO_DB_URL = mongodb+srv://kamaradennis36:t3MF1vaRJ3fqNtaQ@cluster0.eotpj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

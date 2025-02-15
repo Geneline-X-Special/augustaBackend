@@ -1,4 +1,3 @@
-// const mongoose = require("mongoose");
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -10,14 +9,13 @@ const userSchema = new mongoose.Schema(
     address: { type: String, required: true },
     nationalId: { type: String, required: true },
     otp: { type: String },
-
-    // Reference to the Password model
-    passwordRef: {
+    password: { type: String, required: true }, // Store hashed password here
+    phoneVerified: { type: Boolean, default: false },
+    wallet: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "password", // Links to Password model
-      default: null, // Initially null, will be updated after password setup
-    },
-    PhoneVerified: { type: Boolean, default: false },
+      ref: "wallet",
+      default: null  // This will store the user's wallet reference
+    }
   },
   {
     timestamps: true,
@@ -25,4 +23,4 @@ const userSchema = new mongoose.Schema(
 );
 
 const userModel = mongoose.model("user", userSchema);
-export default userModel; //export the model to use in other files
+export default userModel;
