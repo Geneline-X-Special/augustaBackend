@@ -13,7 +13,8 @@ const app = express();
 const PORT = process.env.PORT || 3600
 
 connectDB(app);
-// app.use(json());
+app.use(express.json());
+
 // //user plural for routes e.g (/users, /cards)
 // app.use("/users", userRoute);
 // app.use("/cards", requireAuthenticatedUser, cardRoute);

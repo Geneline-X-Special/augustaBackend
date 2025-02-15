@@ -64,7 +64,7 @@ export const initiateTransaction = async (req, res) => {
 // Receipt callback endpoint – handles successful transactions
 export const handleReceipt = async (req, res) => {
   // Expecting query parameters: amount, monimeSessionId, and userId
-  const { amount, monimeSessionId, userId } = req.query;
+  const { amount, userId } = req.query;
   if (!userId || !amount) {
     return res.status(400).send("Missing required parameters");
   }
