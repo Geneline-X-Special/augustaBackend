@@ -6,3 +6,8 @@ DB_PASSWORD=
 DB_PORT=
 APP_URL=
 JWT_SECRET=
+
+OLTRA_PAY_REDIRECT_URL = http://localhost:3800
+PORT = 3800
+
+MONGO_DB_URL = mongodb+srv://kamaradennis36:t3MF1vaRJ3fqNtaQ@cluster0.eotpj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

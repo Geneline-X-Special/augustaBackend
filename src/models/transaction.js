@@ -1,18 +1,24 @@
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const transactionSchema = Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "user" },
-  walletName: { type: Schema.Types.String, required: true },
-  currency: { type: String, required: true },
-  WalletBalance: {
-    type: Schema.Types.Decimal128,
-    required: true,
-    default: 0.0,
+const transactionSchema = new mongoose.Schema(
+  {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
+    walletId: { type: mongoose.Schema.Types.ObjectId, ref: "wallet", required: true },
+    amount: {
+      type: mongoose.Schema.Types.Decimal128,
+      required: true,
+    },
+    transactionType: {
+      type: String,
+      enum: ["credit", "debit"],
+      required: true,
+    },
+    description: { type: String },
   },
-  walletStatus: { type: Boolean, required: true },
-  expiryDate: { type: Date, required: true },
-});
+  {
+    timestamps: true,
+  }
+);
 
-const transaction = model("transaction", transactionSchema);
-
-export default transaction;
+const Transaction = mongoose.model("Transaction", transactionSchema);
+export default Transaction;
