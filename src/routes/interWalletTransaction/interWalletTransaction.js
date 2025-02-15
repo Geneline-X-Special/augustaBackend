@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { transferFunds } from "../../controllers/interWalletTransaction/interWalletTransaction.js";
+import { distributeFunds, transferFunds } from "../../controllers/interWalletTransaction/interWalletTransaction.js";
 const transferRouter = Router()
 
-transferRouter.post("/", transferFunds)
+transferRouter.post("/transfer", transferFunds)
+transferRouter.post("/distribute", distributeFunds)
 
 export default transferRouter
