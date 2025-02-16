@@ -1,4 +1,3 @@
-```markdown
 # Mobile Money Transaction Integration
 
 This document provides an overview of the mobile money transaction integration using the Monime API. The implementation is located in the `mobileMoneyController.js` file within the `src/controllers/loadWallet/` directory.
@@ -234,5 +233,4 @@ You can use tools like Postman to test these endpoints:
 
    - **Method**: `GET`
    - **URL**: `http://your-domain.com/api/mobile-money/cancel?userId=user-id-here&monimeSessionId=session-id-here&amount=amount-here`
-```
 
