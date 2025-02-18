@@ -1,6 +1,6 @@
 import pkg from 'mongoose';
-const { connect, connection } = pkg;
-import { appPort, dbProductionUrl } from "./default.config.js";
+const { connection } = pkg;
+import { appPort, dbUrl } from "./default.config.js";
 import mongoose from 'mongoose';
 
 
@@ -14,7 +14,7 @@ const connectionOptions = {
 const connectDB = async (app) => {
   try {
     if (app) {
-      await mongoose.connect(process.env.MONGO_DB_URL)
+      await mongoose.connect(dbUrl, connectionOptions)
       console.log("✅ Connected to Database Successfully");
       app.listen(appPort, () => {
         console.log(`🚀 Server Listening `);

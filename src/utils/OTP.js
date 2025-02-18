@@ -1,45 +1,60 @@
-import { randomBytes as _randomBytes } from "crypto";
-import africastalking from 'africastalking';
+import nodemailer from "nodemailer";
+import { randomBytes } from "crypto";
+import dotenv from "dotenv";
 
+dotenv.config();
 
-// Initializing africastalking
-const atClient = africastalking({
-  apiKey: process.env.AT_API_KEY,
-  username: process.env.AT_USERNAME,
-});
-
-const sms = atClient.SMS;
-
-// Function to handle the generation of the OTP code
+/**
+ * @function handleGeneratingOtp
+ * @desc Generates a 6-digit One-Time Password (OTP) using random bytes.
+ * @returns {string} - A 6-digit OTP as a string.
+ */
 export const handleGeneratingOtp = () => {
-  // Generate a random 3-byte (6-digit) hexadecimal number
-  const randomBytes = _randomBytes(3);
-  const randomHex = randomBytes.toString("hex");
+  // 🔹 Generate 3 random bytes
+  const randomBytesValue = randomBytes(3);
 
-  // Convert the hexadecimal number to decimal
-  const randomDecimal = parseInt(randomHex, 16);
+  // 🔹 Convert the random bytes to a hexadecimal string
+  const randomHex = randomBytesValue.toString("hex");
 
-  // Ensure the number is six digits by taking the remainder when divided by 1,000,000
-  const sixDigitNumber = randomDecimal % 1000000;
+  // 🔹 Convert the hex string to a decimal number and take the last 6 digits
+  const randomDecimal = parseInt(randomHex, 16) % 1000000;
 
-  // Ensure leading zeros are included if needed
-  const formattedSixDigitNumber = String(sixDigitNumber).padStart(6, "0");
-
-  return formattedSixDigitNumber;
+  // 🔹 Ensure the OTP is exactly 6 digits (pad with leading zeros if necessary)
+  return String(randomDecimal).padStart(6, "0");
 };
 
-// Function used to send the OTP code to the user
-export const sendOtp = async (phoneNumber, otpCode) => {
+/**
+ * @function sendOtp
+ * @desc Sends a One-Time Password (OTP) to a user's email using Nodemailer.
+ * @param {string} email - The recipient's email address.
+ * @param {string} otpCode - The OTP code to be sent.
+ * @returns {boolean} - Returns `true` if email is sent successfully, otherwise `false`.
+ */
+export const sendOtp = async (email, otpCode) => {
   try {
-    const response = await sms.send({
-      to: [phoneNumber], // "+232XXXXXXXXX"
-      message: `YouOTe is: ${otpCode}`, 
+    // 🔹 Create a transporter object using Gmail SMTP settings
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // Using Gmail as the email service provider
+      auth: {
+        user: process.env.EMAIL_USER, // Email address (from .env)
+        pass: process.env.EMAIL_PASS, // Email password or app-specific password (from .env)
+      },
     });
-    console.log('OTP sent: ', response);
-    return { success: true, message: 'OTP sent successfully' }
+
+    // 🔹 Email content configuration
+    const mailOptions = {
+      from: `Olta Pay <${process.env.EMAIL_USER}>`, // Sender's name and email
+      to: email, // Recipient's email
+      subject: "Olta Pay OTP Verification", // Email subject
+      text: `Your OTP code is: ${otpCode}`, // Plain text version of the OTP
+      html: `<p>Your OTP code is: <b>${otpCode}</b></p>`, // HTML version of the OTP
+    };
+
+    // 🔹 Send the email
+    await transporter.sendMail(mailOptions);
+    return true; // ✅ Email sent successfully
   } catch (error) {
     console.error("Error sending OTP:", error);
-    return { success: false, message: "Failed to send OTP." };
+    return false; // ❌ Email sending failed
   }
-}
-
+};

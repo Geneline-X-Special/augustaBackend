@@ -4,7 +4,7 @@ import express from "express";
 import userRoute from "./routes/userRoute/useRoute.js";
 import cardRoute from "../src/routes/cardRoutes/cardsRoute.js";
 import walletRoute from "../src/routes/walletRoute/walletRoute.js";
-import requireAuthenticatedUser from "./middlewares/auth.middleware.js";
+import { requireAuthenticatedUser } from "./middlewares/auth.middleware.js";
 import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
 
 const app = express();
