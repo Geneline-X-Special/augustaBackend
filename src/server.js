@@ -1,11 +1,4 @@
-import dotenv from 'dotenv';
-dotenv.config();
-import express, { json } from "express";
-// import userRoute from "./routes/userRoute/useRoute.js";
-// import cardRoute from "../src/routes/cardRoutes/cardsRoute.js";
-// import walletRoute from "../src/routes/walletRoute/walletRoute.js";
-// import requireAuthenticatedUser from "./middlewares/auth.middleware.js";
-import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
+import app from './app.js'
 import connectDB from "./config/database.js";
 import transferRouter from './routes/interWalletTransaction/interWalletTransaction.js';
 
