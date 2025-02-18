@@ -2,7 +2,6 @@ import app from './app.js'
 import connectDB from "./config/database.js";
 import transferRouter from './routes/interWalletTransaction/interWalletTransaction.js';
 
-const app = express();
 
 const PORT = process.env.PORT || 3600
 

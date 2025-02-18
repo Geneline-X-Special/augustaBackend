@@ -1,9 +1,30 @@
 // Import Joi for data validation
 import Joi from "joi";
+///// ZOD VALIDATION ///
+import { z } from 'zod';
 
 const date = new Date(); // Get the current date
 
 // ============================== SCHEMAS ============================== //
+
+
+// Schema for one-to-one transfer
+export const oneToOneTransferSchema = z.object({
+  senderId: z.string().nonempty(),
+  recipientId: z.string().nonempty(),
+  amount: z.number().positive(),
+});
+
+// Schema for one-to-many distribution
+export const distributionSchema = z.object({
+  recipientId: z.string().nonempty(),
+  amount: z.number().positive(),
+});
+
+export const oneToManyTransferSchema = z.object({
+  senderId: z.string().nonempty(),
+  distributions: z.array(distributionSchema).nonempty(),
+});
 
 /**
  * User Registration Schema
