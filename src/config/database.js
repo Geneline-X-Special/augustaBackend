@@ -14,7 +14,7 @@ const connectionOptions = {
 const connectDB = async (app) => {
   try {
     if (app) {
-      await mongoose.connect(dbUrl, connectionOptions)
+      await mongoose.connect(process.env.MONGO_DB_URL, connectionOptions)
       console.log("✅ Connected to Database Successfully");
       app.listen(appPort, () => {
         console.log(`🚀 Server Listening `);

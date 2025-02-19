@@ -1,6 +1,8 @@
-import app from './app.js'
+// import app from './app.js'
 import connectDB from "./config/database.js";
 import transferRouter from './routes/interWalletTransaction/interWalletTransaction.js';
+import express from "express"
+import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
 
 const app = express();
 
