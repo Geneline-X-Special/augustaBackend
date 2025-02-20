@@ -6,6 +6,7 @@ import cardRoute from "../src/routes/cardRoutes/cardsRoute.js";
 import walletRoute from "../src/routes/walletRoute/walletRoute.js";
 import { requireAuthenticatedUser } from "./middlewares/auth.middleware.js";
 import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
+import transferRouter from './routes/interWalletTransaction/interWalletTransaction.js';
 
 const app = express();
 app.use(express.json());
@@ -16,5 +17,10 @@ app.use("/wallet", requireAuthenticatedUser, walletRoute);
 
 ///////////////// Mobile money /////////////////
 app.use("/api/mobile-money", mobileMoneyRouter);
+
+
+//////// Transfer Cash ///////
+app.use("/api/wallet", transferRouter)
+
 
 export default app;
