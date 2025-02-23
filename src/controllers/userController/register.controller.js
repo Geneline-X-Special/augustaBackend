@@ -92,6 +92,9 @@ export const registerUser = async (req, res) => {
       });
     }
 
+    // ✅ Update the user with the wallet ObjectId
+    await userModel.findByIdAndUpdate(userCreated._id, { wallet: walletCreated._id });
+
     // 🔹 Return success response with OTP (and optionally wallet details)
     return res.status(201).json({
       message: `User Account Created Successfully. Verify Account with the following OTP: ${otp}`,
