@@ -3,7 +3,7 @@ import { handleGeneratingOtp, sendOtp } from "../../utils/OTP.js";
 import validator from "../../utils/Validators.js";
 import userModel from "../../models/User.js";
 import passwordModel from "../../models/password.js"; // Import password model
-
+import Wallet from "../../models/wallet.js";
 /**
  * @function registerUser
  * @desc Handles user registration, including input validation, OTP generation, 
@@ -74,9 +74,36 @@ export const registerUser = async (req, res) => {
       password: hashedPassword, // Store the hashed password securely
     });
 
-    // 🔹 Return success response with OTP for verification
+    
+    //  Create a wallet for the newly registered user
+    const walletCreated = await Wallet.create({
+      userId: userCreated._id,              
+      walletName: `${firstName} ${lastName} Wallet`, 
+      currency: "SLE",                      
+      walletBalance: 0.0,                  
+      walletStatus: true, 
+      expiryDate: null,                  
+    });
+
+    if (!walletCreated) {
+      return res.status(500).json({ 
+        message: "Wallet creation failed", 
+        statusCode: 500 
+      });
+    }
+
+    // 🔹 Return success response with OTP (and optionally wallet details)
     return res.status(201).json({
       message: `User Account Created Successfully. Verify Account with the following OTP: ${otp}`,
+      userId: userCreated._id,
+      wallet: {
+        walletId: walletCreated._id,
+        walletName: walletCreated.walletName,
+        currency: walletCreated.currency,
+        walletBalance: walletCreated.walletBalance,
+        walletStatus: walletCreated.walletStatus,
+        expiryDate: walletCreated.expiryDate,
+      },
     });
   } catch (error) {
     console.error("REGISTER USER ERROR: ", error.message || error);

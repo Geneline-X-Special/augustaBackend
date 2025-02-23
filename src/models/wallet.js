@@ -11,7 +11,7 @@ const walletSchema = new mongoose.Schema(
       default: 0.0,
     },
     walletStatus: { type: Boolean, required: true, default: true },
-    expiryDate: { type: Date, required: true },
+    expiryDate: { type: Date, required: false, default: null },
   },
   {
     timestamps: true,
