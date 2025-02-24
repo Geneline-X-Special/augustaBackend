@@ -2,7 +2,9 @@
 import mongoose from 'mongoose';
 import Wallet from '../../models/wallet.js';
 import Transaction from '../../models/transaction.js';
+import userModel from '../../models/User.js';
 import { oneToOneTransferSchema, oneToManyTransferSchema } from '../../utils/Validators.js';
+import { z } from 'zod';
 
 // Transfer funds between users
 export const transferFunds = async (req, res) => {
@@ -13,23 +15,42 @@ export const transferFunds = async (req, res) => {
     // Validate request body
     const { senderId, recipientId, amount } = oneToOneTransferSchema.parse(req.body);
 
+    // Debugging: Log senderId and recipientId
+    console.log("Sender ID:", senderId);
+    console.log("Recipient ID:", recipientId);
+
     // Retrieve sender's wallet
-    const senderWallet = await Wallet.findOne({ userId: senderId }).session(session);
+    const senderWallet = await Wallet.findOne({ userId: new mongoose.Types.ObjectId(senderId) }).session(session);
     if (!senderWallet) {
       return res.status(404).json({ error: 'Sender wallet not found' });
     }
 
     // Retrieve recipient's wallet
-    const recipientWallet = await Wallet.findOne({ userId: recipientId }).session(session);
+    const recipientWallet = await Wallet.findOne({ userId: new mongoose.Types.ObjectId(recipientId) }).session(session);
     if (!recipientWallet) {
       return res.status(404).json({ error: 'Recipient wallet not found' });
     }
+
+    // Debugging: Log sender and recipient wallets
+    console.log("Sender Wallet:", senderWallet);
+    console.log("Recipient Wallet:", recipientWallet);
 
     // Check if sender has sufficient balance
     if (senderWallet.walletBalance < amount) {
       return res.status(400).json({ error: 'Insufficient funds in sender\'s wallet' });
     }
 
+    // Fetch sender and recipient names
+    const sender = await userModel.findById(new mongoose.Types.ObjectId(senderId)).session(session);
+    const recipient = await userModel.findById(new mongoose.Types.ObjectId(recipientId)).session(session);
+
+    // Debugging: Log sender and recipient
+    console.log("Sender:", sender);
+    console.log("Recipient:", recipient);
+
+    if (!sender || !recipient) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     // Perform the transfer
     senderWallet.walletBalance -= amount;
     recipientWallet.walletBalance += amount;
@@ -44,7 +65,7 @@ export const transferFunds = async (req, res) => {
       walletId: senderWallet._id,
       amount,
       transactionType: 'debit',
-      description: `Transfer to user ${recipientId}`,
+      description: `Transfer to ${recipient.firstName} ${recipient.lastName} (${recipientId}) ${amount} SLE`,
     });
 
     // Record the transaction for recipient
@@ -53,7 +74,7 @@ export const transferFunds = async (req, res) => {
       walletId: recipientWallet._id,
       amount,
       transactionType: 'credit',
-      description: `Transfer from user ${senderId}`,
+      description: `Received from ${sender.firstName} ${sender.lastName} (${senderId}) ${amount} SLE`,
     });
 
     // Save the transactions
@@ -62,7 +83,7 @@ export const transferFunds = async (req, res) => {
 
     // Commit the transaction
     await session.commitTransaction();
-    session.endSexssion();
+    session.endSession();
 
     return res.status(200).json({ message: 'Transfer successful' });
   } catch (error) {
@@ -103,9 +124,18 @@ export const distributeFunds = async (req, res) => {
       return res.status(400).json({ error: 'Insufficient funds in sender\'s wallet' });
     }
 
+    // Fetch sender's name
+    const sender = await userModel.findOne({ userId: senderId }).session(session);
+    if (!sender) {
+      return res.status(404).json({ error: 'Sender not found' });
+    }
+
     // Deduct total amount from sender's wallet
     senderWallet.walletBalance -= totalAmount;
     await senderWallet.save({ session });
+
+    // Array to store recipient details for the description
+    const recipientDetails = [];
 
     // Iterate over distributions and credit each recipient
     for (const { recipientId, amount } of distributions) {
@@ -113,6 +143,12 @@ export const distributeFunds = async (req, res) => {
       const recipientWallet = await Wallet.findOne({ userId: recipientId }).session(session);
       if (!recipientWallet) {
         throw new Error(`Recipient wallet not found for user ${recipientId}`);
+      }
+
+      // Fetch recipient's name
+      const recipient = await userModel.findOne({ userId: recipientId }).session(session);
+      if (!recipient) {
+        throw new Error(`Recipient not found for user ${recipientId}`);
       }
 
       // Update recipient's wallet balance
@@ -125,10 +161,16 @@ export const distributeFunds = async (req, res) => {
         walletId: recipientWallet._id,
         amount,
         transactionType: 'credit',
-        description: `Transfer from user ${senderId}`,
+        description: `Received from ${sender.name} (${senderId}) ${amount} SLE`, // Recipient's description
       });
       await recipientTransaction.save({ session });
+
+      // Add recipient details to the array for the sender's description
+      recipientDetails.push(`${recipient.name} (${recipientId}) - ${amount} SLE`);
     }
+
+    // Build the sender's transaction description
+    const senderDescription = `Distributed funds to: ${recipientDetails.join(', ')}`;
 
     // Record the transaction for sender
     const senderTransaction = new Transaction({
@@ -136,7 +178,7 @@ export const distributeFunds = async (req, res) => {
       walletId: senderWallet._id,
       amount: totalAmount,
       transactionType: 'debit',
-      description: 'Distributed funds to multiple users',
+      description: senderDescription, // Dynamic description with recipient names and amounts
     });
     await senderTransaction.save({ session });
 

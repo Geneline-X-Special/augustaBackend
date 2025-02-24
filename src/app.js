@@ -7,6 +7,7 @@ import walletRoute from "../src/routes/walletRoute/walletRoute.js";
 import { requireAuthenticatedUser } from "./middlewares/auth.middleware.js";
 import mobileMoneyRouter from './routes/loadWallet/loadWallet.js';
 import transferRouter from './routes/interWalletTransaction/interWalletTransaction.js';
+import transactionRouter from './routes/transactionRoute/transactionRoute.js';
 
 const app = express();
 app.use(express.json());
@@ -14,7 +15,7 @@ app.use(express.json());
 app.use("/users", userRoute);
 app.use("/cards", requireAuthenticatedUser, cardRoute);
 app.use("/wallet", requireAuthenticatedUser, walletRoute);
-
+app.use("/api/transactions", transactionRouter);
 ///////////////// Mobile money /////////////////
 app.use("/api/mobile-money", mobileMoneyRouter);
 

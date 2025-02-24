@@ -8,7 +8,7 @@ const mobileMoneyRouter = Router();
 mobileMoneyRouter.post('/initiate', initiateTransaction);
 
 // Callback endpoint for a successful transaction
-mobileMoneyRouter.post('/receipt', handleReceipt);
+mobileMoneyRouter.get('/receipt', handleReceipt);
 
 // Callback endpoint for a failed/cancelled transaction
 mobileMoneyRouter.post('/cancel', handleCancel);
